@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "46886005209",
+    "project_id": "fairshare-expense-split",
+    "storage_bucket": "fairshare-expense-split.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:46886005209:android:77da7cdb6ed62702c2d1c8",
+        "android_client_info": {
+          "package_name": "com.fairshare.fairshare_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtwhH8rYxHvX4V-Ka2sWpn-avk9ahkbs0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

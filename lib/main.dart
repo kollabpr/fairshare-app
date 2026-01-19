@@ -1,27 +1,108 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'firebase_options.dart';
 import 'config/app_theme.dart';
 import 'services/services.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/groups/group_list_screen.dart';
 
+/// Global error message for displaying startup errors
+String? _startupError;
+
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // Catch all errors during initialization
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp();
+    // Set up Flutter error handling
+    FlutterError.onError = (FlutterErrorDetails details) {
+      if (details.exceptionAsString().contains('Failed to load font') ||
+          details.exceptionAsString().contains('network')) {
+        debugPrint('Font loading error (handled gracefully): ${details.exception}');
+        return;
+      }
+      FlutterError.presentError(details);
+      _startupError = details.exceptionAsString();
+    };
 
-  // Set system UI overlay style
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.light,
-    systemNavigationBarColor: AppTheme.bgPrimary,
-    systemNavigationBarIconBrightness: Brightness.light,
-  ));
+    try {
+      // Initialize Firebase with generated options
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    } catch (e) {
+      debugPrint('Firebase init error: $e');
+      // Don't crash - app will show error on login attempt
+    }
 
-  runApp(const FairShareApp());
+    // Set system UI overlay style
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: AppTheme.bgPrimary,
+      systemNavigationBarIconBrightness: Brightness.light,
+    ));
+
+    runApp(const FairShareApp());
+  }, (error, stackTrace) {
+    // Handle errors gracefully
+    final errorStr = error.toString();
+    if (errorStr.contains('Failed to load font') ||
+        errorStr.contains('network') ||
+        errorStr.contains('SocketException')) {
+      debugPrint('Network error during startup (handled gracefully): $error');
+      runApp(const FairShareApp());
+      return;
+    }
+
+    debugPrint('Uncaught error: $error');
+    debugPrint('Stack trace: $stackTrace');
+    _startupError = error.toString();
+    runApp(ErrorApp(error: error.toString()));
+  });
+}
+
+/// Error app to display when startup fails
+class ErrorApp extends StatelessWidget {
+  final String error;
+  const ErrorApp({super.key, required this.error});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: AppTheme.bgPrimary,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, color: Colors.red, size: 64),
+                const SizedBox(height: 20),
+                const Text(
+                  'App Startup Error',
+                  style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Text(
+                      error,
+                      style: const TextStyle(color: Colors.white70, fontSize: 14),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class FairShareApp extends StatelessWidget {
