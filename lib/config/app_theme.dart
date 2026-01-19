@@ -6,25 +6,26 @@ import 'package:google_fonts/google_fonts.dart';
 /// Design System: Dark mode with vibrant accent colors
 class AppTheme {
   // ============================================
-  // FAIRSHARE BRAND COLORS
-  // Clean, modern palette for expense splitting
+  // PREMIUM DARK THEME COLORS
+  // Matches Synqro aesthetic with vibrant accents
   // ============================================
 
   // Background colors - Deep, rich dark palette
-  static const Color bgPrimary = Color(0xFF0a0e1a);
-  static const Color bgSecondary = Color(0xFF111827);
-  static const Color bgTertiary = Color(0xFF1f2937);
-  static const Color bgCard = Color(0xFF151c2c);
-  static const Color bgCardLight = Color(0xFF1a2332);
-  static const Color bgSurface = Color(0xFF121826);
+  static const Color bgPrimary = Color(0xFF000814);
+  static const Color bgSecondary = Color(0xFF001d3d);
+  static const Color bgTertiary = Color(0xFF003566);
+  static const Color bgCard = Color(0xFF0a1628);
+  static const Color bgCardLight = Color(0xFF0f1f35);
+  static const Color bgSurface = Color(0xFF0d1929);
 
-  // Accent colors - FairShare brand
-  static const Color accentPrimary = Color(0xFF6366f1); // Indigo/Purple
-  static const Color accentSecondary = Color(0xFF818cf8); // Light indigo
-  static const Color accentBlue = Color(0xFF3b82f6); // Blue
-  static const Color accentGreen = Color(0xFF10b981); // Emerald - for positive
-  static const Color accentOrange = Color(0xFFf59e0b); // Amber
-  static const Color accentPink = Color(0xFFec4899); // Pink
+  // Accent colors - Vibrant and modern
+  static const Color accentPrimary = Color(0xFF00d47e); // Primary green
+  static const Color accentSecondary = Color(0xFF00ffaa); // Bright green
+  static const Color accentBlue = Color(0xFF0096ff); // Bright blue
+  static const Color accentGreen = Color(0xFF00d47e); // Same as primary for consistency
+  static const Color accentOrange = Color(0xFFff9500); // Orange
+  static const Color accentPink = Color(0xFFff2d55); // Pink/Red
+  static const Color accentPurple = Color(0xFF8b5cf6); // Purple
 
   // Text colors - High contrast for readability
   static const Color textPrimary = Color(0xFFFFFFFF);
@@ -33,15 +34,19 @@ class AppTheme {
   static const Color textDim = Color(0x4DFFFFFF); // 30% white
 
   // Status colors
-  static const Color successColor = Color(0xFF10b981); // Emerald
-  static const Color errorColor = Color(0xFFef4444); // Red
-  static const Color warningColor = Color(0xFFf59e0b); // Amber
-  static const Color infoColor = Color(0xFF3b82f6); // Blue
+  static const Color successColor = Color(0xFF00d47e);
+  static const Color errorColor = Color(0xFFff6b6b);
+  static const Color warningColor = Color(0xFFffc107);
+  static const Color infoColor = Color(0xFF0096ff);
 
   // Split colors - Who owes / who gets back
-  static const Color owesColor = Color(0xFFef4444); // Red - you owe
-  static const Color getBackColor = Color(0xFF10b981); // Green - you get back
+  static const Color owesColor = Color(0xFFff6b6b); // Red - you owe
+  static const Color getBackColor = Color(0xFF00d47e); // Green - you get back
   static const Color settledColor = Color(0xFF6b7280); // Gray - settled
+
+  // Income/Expense colors
+  static const Color incomeColor = Color(0xFF00d47e);
+  static const Color expenseColor = Color(0xFFff6b6b);
 
   // Border colors
   static const Color borderColor = Color(0x14FFFFFF); // 8% white
@@ -60,7 +65,14 @@ class AppTheme {
   static const LinearGradient primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [accentPrimary, Color(0xFF4f46e5)],
+    colors: [accentPrimary, Color(0xFF00b36b)],
+  );
+
+  /// Gradient for balance card and primary buttons
+  static LinearGradient get balanceGradient => const LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [bgSecondary, bgTertiary],
   );
 
   static const LinearGradient heroGradient = LinearGradient(
@@ -256,7 +268,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: accentPrimary,
-          foregroundColor: Colors.white,
+          foregroundColor: Colors.black,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
           shape: RoundedRectangleBorder(
@@ -266,6 +278,11 @@ class AppTheme {
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
+        ).copyWith(
+          elevation: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.pressed)) return 0;
+            return 0;
+          }),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(

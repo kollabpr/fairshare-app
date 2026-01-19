@@ -1,1 +1,75 @@
-{"hosting":{"public":"website","ignore":["firebase.json","**/.*","**/node_modules/**","CLAUDE.md"],"rewrites":[{"source":"**","destination":"/index.html"}],"headers":[{"source":"**/*.@(apk)","headers":[{"key":"Content-Type","value":"application/vnd.android.package-archive"},{"key":"Content-Disposition","value":"attachment"}]},{"source":"**/*.@(js|css)","headers":[{"key":"Cache-Control","value":"max-age=31536000"}]},{"source":"**/*.@(jpg|jpeg|gif|png|svg|webp|ico)","headers":[{"key":"Cache-Control","value":"max-age=31536000"}]}]},"storage":{"rules":"storage.rules"},"flutter":{"platforms":{"android":{"default":{"projectId":"fairshare-expense-split","appId":"1:46886005209:android:77da7cdb6ed62702c2d1c8","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"fairshare-expense-split","configurations":{"android":"1:46886005209:android:77da7cdb6ed62702c2d1c8"}}}}}}
+{
+  "hosting": {
+    "public": "website",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "CLAUDE.md"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(apk)",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/vnd.android.package-archive"
+          },
+          {
+            "key": "Content-Disposition",
+            "value": "attachment"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(js|css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=31536000"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(jpg|jpeg|gif|png|svg|webp|ico)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=31536000"
+          }
+        ]
+      }
+    ]
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "fairshare-expense-split",
+          "appId": "1:46886005209:android:77da7cdb6ed62702c2d1c8",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "fairshare-expense-split",
+          "configurations": {
+            "android": "1:46886005209:android:77da7cdb6ed62702c2d1c8"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}
