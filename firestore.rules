@@ -1,0 +1,99 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================================
+    // FAIRSHARE SECURITY RULES
+    // Client-First Architecture
+    // ==========================================
+
+    // Users can only access their own profile
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Groups: Member-based access
+    match /groups/{groupId} {
+      // Anyone authenticated can read if they're a member
+      allow read: if request.auth != null && isGroupMember(groupId);
+
+      // Anyone authenticated can create a group
+      allow create: if request.auth != null;
+
+      // Only admins can update or delete
+      allow update: if request.auth != null && isGroupAdmin(groupId);
+      allow delete: if request.auth != null && isGroupAdmin(groupId);
+
+      // Members subcollection
+      match /members/{memberId} {
+        allow read: if request.auth != null && isGroupMember(groupId);
+        allow create: if request.auth != null &&
+          (isGroupAdmin(groupId) || memberId == request.auth.uid);
+        allow update: if request.auth != null &&
+          (isGroupAdmin(groupId) || resource.data.userId == request.auth.uid);
+        allow delete: if request.auth != null && isGroupAdmin(groupId);
+      }
+
+      // Expenses subcollection
+      match /expenses/{expenseId} {
+        allow read: if request.auth != null && isGroupMember(groupId);
+        allow create: if request.auth != null && isGroupMember(groupId);
+        allow update: if request.auth != null && isGroupMember(groupId) &&
+          (resource.data.createdBy == request.auth.uid || isGroupAdmin(groupId));
+        allow delete: if request.auth != null && isGroupAdmin(groupId);
+
+        // Splits subcollection
+        match /splits/{splitId} {
+          allow read: if request.auth != null && isGroupMember(groupId);
+          allow write: if request.auth != null && isGroupMember(groupId);
+        }
+      }
+
+      // Settlements subcollection
+      match /settlements/{settlementId} {
+        allow read: if request.auth != null && isGroupMember(groupId);
+        allow create: if request.auth != null && isGroupMember(groupId);
+        allow update: if request.auth != null && isGroupMember(groupId);
+        allow delete: if request.auth != null && isGroupAdmin(groupId);
+      }
+    }
+
+    // Invites: Authenticated read to prevent data leakage
+    // For public invite links, use Cloud Functions to verify and return limited data
+    match /invites/{inviteId} {
+      // Only authenticated users can read invites (prevents enumeration attacks)
+      allow read: if request.auth != null;
+      // Only authenticated users can create
+      allow create: if request.auth != null;
+      // Only creator or group admin can update
+      allow update: if request.auth != null &&
+        (resource.data.createdBy == request.auth.uid ||
+         isGroupAdmin(resource.data.groupId));
+      // Only creator can delete
+      allow delete: if request.auth != null &&
+        resource.data.createdBy == request.auth.uid;
+    }
+
+    // ==========================================
+    // HELPER FUNCTIONS
+    // ==========================================
+
+    // Check if user is a member of the group
+    function isGroupMember(groupId) {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/groups/$(groupId)/members/$(request.auth.uid));
+    }
+
+    // Check if user is an admin of the group
+    function isGroupAdmin(groupId) {
+      return request.auth != null &&
+        get(/databases/$(database)/documents/groups/$(groupId)/members/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Validate expense data
+    function isValidExpense(expense) {
+      return expense.amount is number && expense.amount > 0 &&
+        expense.description is string && expense.description.size() > 0;
+    }
+  }
+}

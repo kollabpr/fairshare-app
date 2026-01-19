@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FairShare - Split Bills Fairly, Stay Friends Forever</title>
+    <meta name="description" content="FairShare is the free bill splitting app that makes sharing expenses simple. Unlimited groups, OCR receipts, income-based splitting. Better than Splitwise.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%2300d47e'/%3E%3Ctext x='50' y='65' font-size='40' text-anchor='middle' fill='white' font-family='Arial'%3E$%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <span class="logo-icon">$</span>
+                <span class="logo-text">FairShare</span>
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#download" class="btn btn-primary btn-nav">Download</a>
+            </div>
+            <button class="mobile-menu-btn" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+            <div class="grid-overlay"></div>
+        </div>
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="badge-row">
+                    <span class="badge"><span class="badge-icon">&#10003;</span> 100% Free Forever</span>
+                    <span class="badge"><span class="badge-icon">&#128274;</span> Privacy First</span>
+                </div>
+                <h1 class="hero-title">
+                    Split bills <span class="gradient-text">fairly</span>,<br>
+                    stay friends <span class="gradient-text">forever</span>
+                </h1>
+                <p class="hero-subtitle">
+                    The modern expense splitting app that finally gets it right.
+                    Unlimited groups, smart OCR receipts, and income-based fair splitting.
+                    No ads. No premium tiers. Just fair splitting.
+                </p>
+                <div class="hero-cta">
+                    <a href="#download" class="btn btn-primary btn-large">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.523 2H6.477C5.768 2 5.277 2.724 5.531 3.382l3.5 9.036c.19.49.655.832 1.185.87L14 13.5v6.75a1.75 1.75 0 103.5 0V13.5l3.785-.212c.529-.038.994-.38 1.184-.87l3.5-9.036C18.723 2.724 18.232 2 17.523 2z"/>
+                        </svg>
+                        Download for Android
+                    </a>
+                    <a href="#features" class="btn btn-secondary btn-large">
+                        Learn More
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-value">Free</span>
+                        <span class="stat-label">No hidden costs</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <span class="stat-value">Unlimited</span>
+                        <span class="stat-label">Groups & expenses</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <span class="stat-value">Smart</span>
+                        <span class="stat-label">OCR receipts</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="phone-mockup">
+                    <div class="phone-frame">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <div class="app-header">
+                                <span class="app-title">FairShare</span>
+                                <div class="app-avatar">JD</div>
+                            </div>
+                            <div class="app-balance-card">
+                                <span class="balance-label">Your Balance</span>
+                                <span class="balance-value">+$127.50</span>
+                                <span class="balance-status">You're owed money</span>
+                            </div>
+                            <div class="app-groups">
+                                <div class="group-item">
+                                    <div class="group-icon" style="background: rgba(139, 92, 246, 0.2); color: #8b5cf6;">&#127968;</div>
+                                    <div class="group-info">
+                                        <span class="group-name">Roommates</span>
+                                        <span class="group-members">4 members</span>
+                                    </div>
+                                    <span class="group-balance positive">+$85.00</span>
+                                </div>
+                                <div class="group-item">
+                                    <div class="group-icon" style="background: rgba(0, 212, 126, 0.2); color: #00d47e;">&#9992;</div>
+                                    <div class="group-info">
+                                        <span class="group-name">Europe Trip</span>
+                                        <span class="group-members">6 members</span>
+                                    </div>
+                                    <span class="group-balance positive">+$42.50</span>
+                                </div>
+                                <div class="group-item">
+                                    <div class="group-icon" style="background: rgba(0, 150, 255, 0.2); color: #0096ff;">&#127860;</div>
+                                    <div class="group-info">
+                                        <span class="group-name">Dinner Club</span>
+                                        <span class="group-members">8 members</span>
+                                    </div>
+                                    <span class="group-balance settled">Settled</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phone-glow"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Features</span>
+                <h2 class="section-title">Everything you need,<br><span class="gradient-text">nothing you don't</span></h2>
+                <p class="section-subtitle">Designed for real life expense sharing, not premium upsells</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: rgba(0, 212, 126, 0.15);">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="#00d47e">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">100% Free Forever</h3>
+                    <p class="feature-desc">No ads, no premium tiers, no catch. Unlimited groups, unlimited expenses, unlimited everything.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: rgba(139, 92, 246, 0.15);">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="#8b5cf6">
+                            <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Smart OCR Receipts</h3>
+                    <p class="feature-desc">Snap a photo and let AI extract amounts automatically. On-device processing means zero API costs.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: rgba(0, 150, 255, 0.15);">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="#0096ff">
+                            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Fair Income-Based Splitting</h3>
+                    <p class="feature-desc">Our signature feature: split by income so higher earners pay more. Finally, truly fair sharing.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: rgba(255, 159, 67, 0.15);">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="#ff9f43">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Debt Simplification</h3>
+                    <p class="feature-desc">Automatically minimizes the number of payments needed. No more circular debts or confusion.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: rgba(255, 107, 107, 0.15);">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="#ff6b6b">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Splitwise Import</h3>
+                    <p class="feature-desc">Migrating from Splitwise? Import your CSV data with one click. All your history, preserved.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: rgba(46, 213, 115, 0.15);">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="#2ed573">
+                            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Secure & Private</h3>
+                    <p class="feature-desc">Your data stays yours. End-to-end encryption, no selling to third parties. Ever.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">How It Works</span>
+                <h2 class="section-title">Start splitting in<br><span class="gradient-text">under 60 seconds</span></h2>
+            </div>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Create a Group</h3>
+                        <p class="step-desc">Add your roommates, travel buddies, or dinner crew. Invite via link or add them directly.</p>
+                    </div>
+                    <div class="step-visual">
+                        <div class="step-card">
+                            <div class="mini-group">
+                                <div class="mini-avatar" style="background: #8b5cf6;">J</div>
+                                <div class="mini-avatar" style="background: #00d47e;">S</div>
+                                <div class="mini-avatar" style="background: #0096ff;">M</div>
+                                <div class="mini-avatar add">+</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Add Expenses</h3>
+                        <p class="step-desc">Log who paid, choose how to split (equal, by percentage, or by income). Snap receipts for auto-fill.</p>
+                    </div>
+                    <div class="step-visual">
+                        <div class="step-card">
+                            <div class="mini-expense">
+                                <span class="expense-emoji">&#127829;</span>
+                                <span class="expense-name">Dinner</span>
+                                <span class="expense-amount">$89.50</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Settle Up</h3>
+                        <p class="step-desc">See simplified balances showing who owes whom. Pay directly and mark as settled with one tap.</p>
+                    </div>
+                    <div class="step-visual">
+                        <div class="step-card">
+                            <div class="mini-settle">
+                                <span class="settle-from">You</span>
+                                <span class="settle-arrow">&#8594;</span>
+                                <span class="settle-to">Sarah</span>
+                                <span class="settle-amount">$24.50</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Why FairShare?</span>
+                <h2 class="section-title">Compare and see<br><span class="gradient-text">the difference</span></h2>
+            </div>
+            <div class="comparison-table">
+                <div class="comparison-header">
+                    <div class="comparison-feature">Feature</div>
+                    <div class="comparison-us">FairShare</div>
+                    <div class="comparison-them">Others</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-feature">Price</div>
+                    <div class="comparison-us highlight">Free Forever</div>
+                    <div class="comparison-them">$4.99/month Pro</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-feature">Receipt OCR</div>
+                    <div class="comparison-us highlight">Unlimited</div>
+                    <div class="comparison-them">5/month free</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-feature">Income-Based Splitting</div>
+                    <div class="comparison-us highlight">&#10003;</div>
+                    <div class="comparison-them">&#10007;</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-feature">Ads</div>
+                    <div class="comparison-us highlight">Never</div>
+                    <div class="comparison-them">Free tier has ads</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-feature">Group Limit</div>
+                    <div class="comparison-us highlight">Unlimited</div>
+                    <div class="comparison-them">3 on free tier</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Pricing</span>
+                <h2 class="section-title">Free. Forever.<br><span class="gradient-text">Really.</span></h2>
+                <p class="section-subtitle">We believe expense splitting should be free for everyone</p>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-header">
+                    <span class="pricing-name">FairShare</span>
+                    <div class="pricing-amount">
+                        <span class="price">$0</span>
+                        <span class="period">/forever</span>
+                    </div>
+                </div>
+                <ul class="pricing-features">
+                    <li><span class="check">&#10003;</span> Unlimited groups</li>
+                    <li><span class="check">&#10003;</span> Unlimited expenses</li>
+                    <li><span class="check">&#10003;</span> Unlimited OCR scans</li>
+                    <li><span class="check">&#10003;</span> Income-based splitting</li>
+                    <li><span class="check">&#10003;</span> Debt simplification</li>
+                    <li><span class="check">&#10003;</span> Splitwise CSV import</li>
+                    <li><span class="check">&#10003;</span> Multiple currencies</li>
+                    <li><span class="check">&#10003;</span> No ads, ever</li>
+                </ul>
+                <a href="#download" class="btn btn-primary btn-large btn-full">Download Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="download">
+        <div class="container">
+            <div class="download-content">
+                <h2 class="download-title">Ready to split fairly?</h2>
+                <p class="download-subtitle">Download FairShare now and start splitting expenses the right way.</p>
+                <div class="download-buttons">
+                    <a href="downloads/fairshare-v1.0.0.apk" class="download-btn android" download>
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.523 15.341l-.003-.001-1.565-1.565a1.5 1.5 0 00-2.122 0l-1.414 1.414a1.5 1.5 0 000 2.122l1.565 1.565.003.001A6.478 6.478 0 0112 20c-3.584 0-6.5-2.916-6.5-6.5S8.416 7 12 7a6.478 6.478 0 011.987.312l.003.001 1.565-1.565a1.5 1.5 0 012.122 0l1.414 1.414a1.5 1.5 0 010 2.122l-1.565 1.565-.003.001A6.478 6.478 0 0118.5 13.5c0 .68-.104 1.337-.298 1.953z"/>
+                            <path d="M6.75 3.75a.75.75 0 00-1.5 0v1.5a.75.75 0 001.5 0v-1.5zM18.75 3.75a.75.75 0 00-1.5 0v1.5a.75.75 0 001.5 0v-1.5zM12 2a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0112 2z"/>
+                        </svg>
+                        <div class="download-btn-text">
+                            <span class="download-btn-small">Download for</span>
+                            <span class="download-btn-large">Android</span>
+                        </div>
+                    </a>
+                    <div class="download-btn ios coming-soon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                        </svg>
+                        <div class="download-btn-text">
+                            <span class="download-btn-small">Coming soon to</span>
+                            <span class="download-btn-large">iOS</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="download-note">Android 7.0+ required. No account needed to try.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <span class="logo-icon">$</span>
+                        <span class="logo-text">FairShare</span>
+                    </a>
+                    <p class="footer-desc">The free expense splitting app that finally gets it right. Split bills fairly, stay friends forever.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Product</h4>
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#download">Download</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Connect</h4>
+                    <a href="#">GitHub</a>
+                    <a href="#">Twitter</a>
+                    <a href="#">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 FairShare. Made with &#10084; for fair splitting everywhere.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
