@@ -11,3 +11,4 @@ export 'activity_service.dart';
 export 'friends_service.dart';
 export 'reports_service.dart';
 export 'recurring_expense_service.dart';
+export 'email_service.dart';

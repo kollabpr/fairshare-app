@@ -4,6 +4,7 @@ import '../models/friend_model.dart';
 import '../models/direct_expense_model.dart';
 import '../models/user_model.dart';
 import '../models/group_model.dart';
+import 'email_service.dart';
 
 /// Service for managing friends and direct expenses between users
 class FriendsService extends ChangeNotifier {
@@ -252,6 +253,14 @@ class FriendsService extends ChangeNotifier {
 
       await batch.commit();
 
+      // Send email notification to the recipient (fire and forget)
+      EmailService.sendFriendRequestEmail(
+        recipientEmail: targetUser.email,
+        recipientName: targetUser.displayName ?? targetUser.email.split('@').first,
+        senderName: fromName ?? fromEmail.split('@').first,
+        senderEmail: fromEmail,
+      );
+
       _isLoading = false;
       notifyListeners();
       return senderFriend;
@@ -321,6 +330,20 @@ class FriendsService extends ChangeNotifier {
       }
 
       await batch.commit();
+
+      // Send email notification to the original sender (fire and forget)
+      // Get accepter's info to include in the email
+      final accepterDoc = await _firestore.collection('users').doc(userId).get();
+      if (accepterDoc.exists) {
+        final accepterData = accepterDoc.data()!;
+        final accepterName = accepterData['displayName'] ?? accepterData['email']?.split('@').first ?? 'Someone';
+
+        EmailService.sendFriendAcceptedEmail(
+          recipientEmail: friend.friendEmail,
+          recipientName: friend.friendName ?? friend.friendEmail.split('@').first,
+          accepterName: accepterName,
+        );
+      }
 
       _isLoading = false;
       notifyListeners();
@@ -667,6 +690,26 @@ class FriendsService extends ChangeNotifier {
       }
 
       await batch.commit();
+
+      // Send email notification to the participant (fire and forget)
+      if (participantOwed > 0) {
+        final currencySymbols = {
+          'USD': '\$',
+          'EUR': '\u20AC',
+          'GBP': '\u00A3',
+          'INR': '\u20B9',
+        };
+        final symbol = currencySymbols[currencyCode] ?? '\$';
+
+        EmailService.sendExpenseNotificationEmail(
+          recipientEmail: participantEmail,
+          recipientName: participantName ?? participantEmail.split('@').first,
+          payerName: payerName ?? payerEmail.split('@').first,
+          expenseDescription: description,
+          amountOwed: participantOwed,
+          currencySymbol: symbol,
+        );
+      }
 
       _isLoading = false;
       notifyListeners();

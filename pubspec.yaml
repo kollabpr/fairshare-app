@@ -32,6 +32,9 @@ dependencies:
   fl_chart: ^0.68.0
   path_provider: ^2.1.2
 
+  # HTTP for API calls (Brevo Email)
+  http: ^1.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
