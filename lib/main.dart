@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'config/app_theme.dart';
+import 'config/secrets.dart';
 import 'services/services.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/home/main_screen.dart';
@@ -33,6 +34,9 @@ void main() async {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
+
+      // Initialize Brevo email service (300 emails/day free)
+      EmailService.initialize(AppSecrets.brevoApiKey);
     } catch (e) {
       debugPrint('Firebase init error: $e');
       // Don't crash - app will show error on login attempt
