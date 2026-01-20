@@ -72,12 +72,29 @@ class _GroupListScreenState extends State<GroupListScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _createGroup,
-        icon: const Icon(Icons.add),
-        label: const Text('New Group'),
-        backgroundColor: AppTheme.accentPrimary,
-        foregroundColor: Colors.white,
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SizedBox(
+          height: 56,
+          child: ElevatedButton.icon(
+            onPressed: _createGroup,
+            icon: const Icon(Icons.add),
+            label: Text(
+              'New Group',
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.accentPrimary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

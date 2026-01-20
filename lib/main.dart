@@ -7,7 +7,7 @@ import 'firebase_options.dart';
 import 'config/app_theme.dart';
 import 'services/services.dart';
 import 'screens/auth/login_screen.dart';
-import 'screens/groups/group_list_screen.dart';
+import 'screens/home/main_screen.dart';
 
 /// Global error message for displaying startup errors
 String? _startupError;
@@ -116,6 +116,7 @@ class FairShareApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => GroupsService()),
         ChangeNotifierProvider(create: (_) => ExpensesService()),
+        ChangeNotifierProvider(create: (_) => ActivityService()),
 
         // Non-notifier services
         Provider(create: (_) => SplittingService()),
@@ -162,7 +163,7 @@ class AuthWrapper extends StatelessWidget {
 
         // Show home if authenticated, login if not
         if (auth.isAuthenticated) {
-          return const GroupListScreen();
+          return const MainScreen();
         }
 
         return const LoginScreen();

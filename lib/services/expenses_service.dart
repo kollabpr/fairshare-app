@@ -24,13 +24,14 @@ class ExpensesService extends ChangeNotifier {
         .collection('groups')
         .doc(groupId)
         .collection('expenses')
-        .where('isDeleted', isEqualTo: false)
-        .orderBy('date', descending: true)
         .snapshots()
         .map((snapshot) {
           _expenses = snapshot.docs
               .map((doc) => ExpenseModel.fromFirestore(doc))
+              .where((e) => !e.isDeleted)
               .toList();
+          // Sort client-side to avoid needing composite index
+          _expenses.sort((a, b) => b.date.compareTo(a.date));
           notifyListeners();
           return _expenses;
         });

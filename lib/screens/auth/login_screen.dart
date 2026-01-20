@@ -131,8 +131,8 @@ class _LoginScreenState extends State<LoginScreen>
 
                   const SizedBox(height: 32),
 
-                  // Value proposition
-                  _buildValueProposition(),
+                  // Dev Mode Button (for testing)
+                  _buildDevModeButton(authService),
 
                   const SizedBox(height: 24),
                 ],
@@ -404,65 +404,68 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  Widget _buildValueProposition() {
+  Widget _buildDevModeButton(AuthService authService) {
     return AnimatedListItem(
       index: 8,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppTheme.bgCard,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppTheme.borderColor),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppTheme.accentPrimary.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    '100% FREE',
-                    style: GoogleFonts.inter(
-                      color: AppTheme.accentPrimary,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
-              ],
+      child: GestureDetector(
+        onTap: authService.isLoading ? null : _handleDevLogin,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.orange.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Colors.orange.withOpacity(0.3),
+              width: 1,
             ),
-            const SizedBox(height: 12),
-            _buildFeatureRow(Icons.receipt_long_rounded, 'Unlimited receipt scanning'),
-            const SizedBox(height: 8),
-            _buildFeatureRow(Icons.block_rounded, 'No 3/day limit like Splitwise'),
-            const SizedBox(height: 8),
-            _buildFeatureRow(Icons.balance_rounded, 'Fair income-based splitting'),
-            const SizedBox(height: 8),
-            _buildFeatureRow(Icons.swap_calls_rounded, 'Import from Splitwise CSV'),
-          ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.developer_mode_rounded,
+                color: Colors.orange,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Dev Mode - Skip Login',
+                style: GoogleFonts.inter(
+                  color: Colors.orange,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildFeatureRow(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(icon, color: AppTheme.successColor, size: 18),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            text,
-            style: GoogleFonts.inter(color: AppTheme.textSecondary, fontSize: 13),
-          ),
-        ),
-      ],
+  Future<void> _handleDevLogin() async {
+    HapticFeedback.lightImpact();
+
+    final authService = context.read<AuthService>();
+
+    // Use test credentials for dev mode
+    const devEmail = 'kollabathulapreetham@gmail.com';
+    const devPassword = 'Alert4114canyon!';
+
+    final success = await authService.signIn(
+      email: devEmail,
+      password: devPassword,
     );
+
+    if (!success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(authService.error ?? 'Dev login failed'),
+          backgroundColor: AppTheme.errorColor,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      );
+    }
   }
 }

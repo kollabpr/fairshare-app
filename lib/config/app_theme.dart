@@ -2,30 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// FairShare Premium Dark Theme
-/// Design System: Dark mode with vibrant accent colors
+/// FairShare Gen Z Inspired Theme
+/// Design System: Dark mode with vibrant neon accents and glassmorphism
 class AppTheme {
   // ============================================
-  // PREMIUM DARK THEME COLORS
-  // Matches Synqro aesthetic with vibrant accents
+  // GEN Z INSPIRED COLOR PALETTE
+  // Vibrant, energetic, and modern
   // ============================================
 
   // Background colors - Deep, rich dark palette
-  static const Color bgPrimary = Color(0xFF000814);
-  static const Color bgSecondary = Color(0xFF001d3d);
-  static const Color bgTertiary = Color(0xFF003566);
-  static const Color bgCard = Color(0xFF0a1628);
-  static const Color bgCardLight = Color(0xFF0f1f35);
-  static const Color bgSurface = Color(0xFF0d1929);
+  static const Color bgPrimary = Color(0xFF0A0A0F);
+  static const Color bgSecondary = Color(0xFF12121A);
+  static const Color bgTertiary = Color(0xFF1A1A25);
+  static const Color bgCard = Color(0xFF151520);
+  static const Color bgCardLight = Color(0xFF1E1E2D);
+  static const Color bgSurface = Color(0xFF13131D);
 
-  // Accent colors - Vibrant and modern
-  static const Color accentPrimary = Color(0xFF00d47e); // Primary green
-  static const Color accentSecondary = Color(0xFF00ffaa); // Bright green
-  static const Color accentBlue = Color(0xFF0096ff); // Bright blue
-  static const Color accentGreen = Color(0xFF00d47e); // Same as primary for consistency
-  static const Color accentOrange = Color(0xFFff9500); // Orange
-  static const Color accentPink = Color(0xFFff2d55); // Pink/Red
-  static const Color accentPurple = Color(0xFF8b5cf6); // Purple
+  // Neon accent colors - Vibrant Gen Z palette
+  static const Color accentPrimary = Color(0xFF00F5A0); // Neon mint
+  static const Color accentSecondary = Color(0xFF00D9FF); // Neon cyan
+  static const Color accentBlue = Color(0xFF6366F1); // Electric indigo
+  static const Color accentGreen = Color(0xFF10B981); // Emerald
+  static const Color accentOrange = Color(0xFFFF6B35); // Hot coral
+  static const Color accentPink = Color(0xFFFF2D92); // Hot pink
+  static const Color accentPurple = Color(0xFFA855F7); // Electric purple
+  static const Color accentYellow = Color(0xFFFBBF24); // Bright yellow
+  static const Color accentRed = Color(0xFFFF4757); // Coral red
+
+  // Gradient colors for Gen Z vibes
+  static const Color gradientPurpleStart = Color(0xFF8B5CF6);
+  static const Color gradientPurpleEnd = Color(0xFFEC4899);
+  static const Color gradientBlueStart = Color(0xFF06B6D4);
+  static const Color gradientBlueEnd = Color(0xFF3B82F6);
+  static const Color gradientGreenStart = Color(0xFF00F5A0);
+  static const Color gradientGreenEnd = Color(0xFF00D9FF);
+  static const Color gradientSunsetStart = Color(0xFFFF6B35);
+  static const Color gradientSunsetEnd = Color(0xFFFF2D92);
 
   // Text colors - High contrast for readability
   static const Color textPrimary = Color(0xFFFFFFFF);
@@ -34,23 +46,27 @@ class AppTheme {
   static const Color textDim = Color(0x4DFFFFFF); // 30% white
 
   // Status colors
-  static const Color successColor = Color(0xFF00d47e);
-  static const Color errorColor = Color(0xFFff6b6b);
-  static const Color warningColor = Color(0xFFffc107);
-  static const Color infoColor = Color(0xFF0096ff);
+  static const Color successColor = Color(0xFF10B981);
+  static const Color errorColor = Color(0xFFFF4757);
+  static const Color warningColor = Color(0xFFFBBF24);
+  static const Color infoColor = Color(0xFF06B6D4);
 
   // Split colors - Who owes / who gets back
-  static const Color owesColor = Color(0xFFff6b6b); // Red - you owe
-  static const Color getBackColor = Color(0xFF00d47e); // Green - you get back
-  static const Color settledColor = Color(0xFF6b7280); // Gray - settled
+  static const Color owesColor = Color(0xFFFF4757); // Red - you owe
+  static const Color getBackColor = Color(0xFF00F5A0); // Neon green - you get back
+  static const Color settledColor = Color(0xFF6B7280); // Gray - settled
 
   // Income/Expense colors
-  static const Color incomeColor = Color(0xFF00d47e);
-  static const Color expenseColor = Color(0xFFff6b6b);
+  static const Color incomeColor = Color(0xFF00F5A0);
+  static const Color expenseColor = Color(0xFFFF4757);
 
   // Border colors
   static const Color borderColor = Color(0x14FFFFFF); // 8% white
   static const Color borderLight = Color(0x1FFFFFFF); // 12% white
+
+  // Glassmorphism colors
+  static const Color glassColor = Color(0x1AFFFFFF); // 10% white
+  static const Color glassBorder = Color(0x33FFFFFF); // 20% white
 
   // Legacy aliases
   static const Color primaryColor = accentPrimary;
@@ -59,13 +75,41 @@ class AppTheme {
   static const Color surfaceColor = bgSurface;
 
   // ============================================
-  // GRADIENTS
+  // GEN Z GRADIENTS
   // ============================================
 
   static const LinearGradient primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [accentPrimary, Color(0xFF00b36b)],
+    colors: [accentPrimary, accentSecondary],
+  );
+
+  /// Purple to pink gradient (TikTok vibes)
+  static const LinearGradient purplePinkGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [gradientPurpleStart, gradientPurpleEnd],
+  );
+
+  /// Blue to cyan gradient (Instagram vibes)
+  static const LinearGradient blueCyanGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [gradientBlueStart, gradientBlueEnd],
+  );
+
+  /// Neon green gradient
+  static const LinearGradient neonGreenGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [gradientGreenStart, gradientGreenEnd],
+  );
+
+  /// Sunset gradient (coral to pink)
+  static const LinearGradient sunsetGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [gradientSunsetStart, gradientSunsetEnd],
   );
 
   /// Gradient for balance card and primary buttons
@@ -86,6 +130,28 @@ class AppTheme {
     end: Alignment.bottomRight,
     colors: [bgCard, bgCardLight],
   );
+
+  /// Glassmorphism gradient overlay
+  static const LinearGradient glassGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0x20FFFFFF),
+      Color(0x08FFFFFF),
+    ],
+  );
+
+  /// Animated border gradient colors
+  static const List<Color> animatedBorderColors = [
+    accentPurple,
+    accentPink,
+    accentOrange,
+    accentYellow,
+    accentGreen,
+    accentSecondary,
+    accentBlue,
+    accentPurple,
+  ];
 
   static LinearGradient glowGradient(Color color) => LinearGradient(
     begin: Alignment.topLeft,
@@ -115,19 +181,42 @@ class AppTheme {
 
   static List<BoxShadow> glowShadow(Color color) => [
     BoxShadow(
-      color: color.withOpacity(0.25),
+      color: color.withOpacity(0.4),
       blurRadius: 30,
+      spreadRadius: -5,
+    ),
+  ];
+
+  /// Neon glow effect
+  static List<BoxShadow> neonGlow(Color color) => [
+    BoxShadow(
+      color: color.withOpacity(0.6),
+      blurRadius: 20,
+      spreadRadius: -2,
+    ),
+    BoxShadow(
+      color: color.withOpacity(0.3),
+      blurRadius: 40,
       spreadRadius: -5,
     ),
   ];
 
   static List<BoxShadow> get accentGlow => [
     BoxShadow(
-      color: accentPrimary.withOpacity(0.25),
+      color: accentPrimary.withOpacity(0.4),
       blurRadius: 40,
       spreadRadius: -5,
     ),
   ];
+
+  // ============================================
+  // BORDER RADIUS CONSTANTS
+  // ============================================
+  static const double radiusSmall = 12;
+  static const double radiusMedium = 16;
+  static const double radiusLarge = 20;
+  static const double radiusXL = 24;
+  static const double radiusXXL = 32;
 
   // ============================================
   // THEME DATA
@@ -142,7 +231,7 @@ class AppTheme {
         secondary: accentBlue,
         surface: bgSurface,
         error: errorColor,
-        onPrimary: Colors.white,
+        onPrimary: Colors.black,
         onSecondary: Colors.white,
         onSurface: textPrimary,
         onError: Colors.white,
@@ -171,7 +260,7 @@ class AppTheme {
         color: bgCard,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(radiusLarge),
           side: const BorderSide(color: borderColor),
         ),
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -272,7 +361,7 @@ class AppTheme {
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(radiusMedium),
           ),
           textStyle: GoogleFonts.inter(
             fontSize: 16,
@@ -291,7 +380,7 @@ class AppTheme {
           side: const BorderSide(color: borderLight, width: 1.5),
           padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(radiusMedium),
           ),
           textStyle: GoogleFonts.inter(
             fontSize: 16,
@@ -313,23 +402,23 @@ class AppTheme {
         filled: true,
         fillColor: bgCardLight,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(radiusMedium),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(radiusMedium),
           borderSide: const BorderSide(color: borderColor),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(radiusMedium),
           borderSide: const BorderSide(color: accentPrimary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(radiusMedium),
           borderSide: const BorderSide(color: errorColor),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(radiusMedium),
           borderSide: const BorderSide(color: errorColor, width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
@@ -368,7 +457,7 @@ class AppTheme {
         ),
         side: const BorderSide(color: borderColor),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(radiusSmall),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
@@ -378,7 +467,7 @@ class AppTheme {
           fontSize: 14,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(radiusSmall),
         ),
         behavior: SnackBarBehavior.floating,
       ),
@@ -386,7 +475,7 @@ class AppTheme {
         backgroundColor: bgCard,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(radiusXL),
         ),
         titleTextStyle: GoogleFonts.spaceGrotesk(
           fontSize: 20,
@@ -394,16 +483,16 @@ class AppTheme {
           color: textPrimary,
         ),
       ),
-      bottomSheetTheme: const BottomSheetThemeData(
+      bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: bgCard,
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(radiusXL)),
         ),
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: accentPrimary,
-        foregroundColor: Colors.white,
+        foregroundColor: Colors.black,
         elevation: 0,
         shape: CircleBorder(),
       ),
@@ -465,6 +554,15 @@ class AppTheme {
     return 'settled up';
   }
 
+  /// Get emoji for balance status (Gen Z style)
+  static String getBalanceEmoji(double balance) {
+    if (balance > 100) return '🤑';
+    if (balance > 0.01) return '💰';
+    if (balance < -100) return '😱';
+    if (balance < -0.01) return '💸';
+    return '✨';
+  }
+
   /// Get color for expense category
   static Color getCategoryColor(String category) {
     final categoryColors = {
@@ -472,13 +570,13 @@ class AppTheme {
       'dining': accentOrange,
       'groceries': accentGreen,
       'shopping': accentPink,
-      'entertainment': Color(0xFF8b5cf6),
+      'entertainment': accentPurple,
       'transportation': accentBlue,
-      'travel': accentBlue,
-      'utilities': Color(0xFF06b6d4),
+      'travel': accentSecondary,
+      'utilities': gradientBlueStart,
       'rent': accentPrimary,
       'bills': accentPrimary,
-      'health': Color(0xFFef4444),
+      'health': accentRed,
       'other': textMuted,
     };
 
@@ -515,6 +613,17 @@ class AppTheme {
       }
     }
     return Icons.category_rounded;
+  }
+
+  /// Get a random gradient for visual variety
+  static LinearGradient getRandomGradient(int seed) {
+    final gradients = [
+      purplePinkGradient,
+      blueCyanGradient,
+      neonGreenGradient,
+      sunsetGradient,
+    ];
+    return gradients[seed % gradients.length];
   }
 }
 

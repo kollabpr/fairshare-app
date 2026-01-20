@@ -1,7 +1,7 @@
 name: fairshare_app
 description: "FairShare - The unlimited, free bill splitting app. Better than Splitwise."
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.3.0+1
 
 environment:
   sdk: ^3.5.4
@@ -27,6 +27,10 @@ dependencies:
 
   # CSV Parsing (Splitwise Import)
   csv: ^5.1.1
+
+  # Charts & Analytics
+  fl_chart: ^0.68.0
+  path_provider: ^2.1.2
 
 dev_dependencies:
   flutter_test:

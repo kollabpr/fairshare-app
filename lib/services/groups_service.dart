@@ -25,13 +25,14 @@ class GroupsService extends ChangeNotifier {
     return _firestore
         .collection('groups')
         .where('memberIds', arrayContains: userId)
-        .orderBy('updatedAt', descending: true)
         .snapshots()
         .map((snapshot) {
           _groups = snapshot.docs
               .map((doc) => GroupModel.fromFirestore(doc))
               .where((g) => !g.isArchived)
               .toList();
+          // Sort client-side to avoid needing composite index
+          _groups.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
           notifyListeners();
           return _groups;
         });

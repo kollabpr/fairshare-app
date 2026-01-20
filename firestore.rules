@@ -10,12 +10,39 @@ service cloud.firestore {
     // Users can only access their own profile
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // Activities subcollection - user's activity feed
+      match /activities/{activityId} {
+        // Users can only read their own activities
+        allow read: if request.auth != null && request.auth.uid == userId;
+        // Activities can be created by anyone (for notifications from other users)
+        allow create: if request.auth != null;
+        // Users can only update their own activities (e.g., mark as read)
+        allow update: if request.auth != null && request.auth.uid == userId;
+        // Users can only delete their own activities
+        allow delete: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Friends subcollection - user can manage their own friends
+      match /friends/{friendId} {
+        // User can read and write their own friends
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Recurring expenses subcollection - personal/friend recurring expenses
+      match /recurringExpenses/{recurringId} {
+        // User can read and write their own recurring expenses
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
 
     // Groups: Member-based access
     match /groups/{groupId} {
-      // Anyone authenticated can read if they're a member
-      allow read: if request.auth != null && isGroupMember(groupId);
+      // Anyone authenticated can read if they're in the memberIds array
+      // Note: For list queries, we must check resource.data (the document being read)
+      // rather than using exists() which doesn't work for collection queries
+      allow read: if request.auth != null &&
+        request.auth.uid in resource.data.memberIds;
 
       // Anyone authenticated can create a group
       allow create: if request.auth != null;
@@ -56,6 +83,20 @@ service cloud.firestore {
         allow update: if request.auth != null && isGroupMember(groupId);
         allow delete: if request.auth != null && isGroupAdmin(groupId);
       }
+
+      // Recurring expenses subcollection - group recurring expenses
+      match /recurringExpenses/{recurringId} {
+        // Group members can read recurring expenses
+        allow read: if request.auth != null && isGroupMember(groupId);
+        // Group members can create recurring expenses
+        allow create: if request.auth != null && isGroupMember(groupId);
+        // Only creator or admin can update
+        allow update: if request.auth != null && isGroupMember(groupId) &&
+          (resource.data.createdBy == request.auth.uid || isGroupAdmin(groupId));
+        // Only creator or admin can delete (soft delete)
+        allow delete: if request.auth != null &&
+          (resource.data.createdBy == request.auth.uid || isGroupAdmin(groupId));
+      }
     }
 
     // Invites: Authenticated read to prevent data leakage
@@ -69,6 +110,51 @@ service cloud.firestore {
       allow update: if request.auth != null &&
         (resource.data.createdBy == request.auth.uid ||
          isGroupAdmin(resource.data.groupId));
+      // Only creator can delete
+      allow delete: if request.auth != null &&
+        resource.data.createdBy == request.auth.uid;
+    }
+
+    // ==========================================
+    // DIRECT EXPENSES (Between Friends, No Group)
+    // ==========================================
+
+    // Direct expenses between two users (not in a group)
+    match /directExpenses/{expenseId} {
+      // Only participants can read
+      allow read: if request.auth != null &&
+        request.auth.uid in resource.data.participants;
+
+      // Authenticated users can create if they're a participant
+      allow create: if request.auth != null &&
+        request.auth.uid in request.resource.data.participants;
+
+      // Only participants can update, and only the creator can fully modify
+      allow update: if request.auth != null &&
+        request.auth.uid in resource.data.participants &&
+        (resource.data.createdBy == request.auth.uid ||
+         // Allow other participant to mark as settled
+         onlyUpdatingAllowedFields(['isSettled', 'settledAt', 'updatedAt']));
+
+      // Only creator can delete
+      allow delete: if request.auth != null &&
+        resource.data.createdBy == request.auth.uid;
+    }
+
+    // Direct settlements between two users (not in a group)
+    match /directSettlements/{settlementId} {
+      // Only participants can read
+      allow read: if request.auth != null &&
+        request.auth.uid in resource.data.participants;
+
+      // Authenticated users can create if they're a participant
+      allow create: if request.auth != null &&
+        request.auth.uid in request.resource.data.participants;
+
+      // Only participants can update (e.g., confirm settlement)
+      allow update: if request.auth != null &&
+        request.auth.uid in resource.data.participants;
+
       // Only creator can delete
       allow delete: if request.auth != null &&
         resource.data.createdBy == request.auth.uid;
@@ -94,6 +180,28 @@ service cloud.firestore {
     function isValidExpense(expense) {
       return expense.amount is number && expense.amount > 0 &&
         expense.description is string && expense.description.size() > 0;
+    }
+
+    // Check if only specific fields are being updated
+    function onlyUpdatingAllowedFields(allowedFields) {
+      let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
+      return affectedKeys.hasOnly(allowedFields);
+    }
+
+    // Validate direct expense data
+    function isValidDirectExpense(expense) {
+      return expense.amount is number && expense.amount > 0 &&
+        expense.description is string && expense.description.size() > 0 &&
+        expense.participants is list && expense.participants.size() == 2 &&
+        expense.payerId is string && expense.payerId.size() > 0 &&
+        expense.participantId is string && expense.participantId.size() > 0;
+    }
+
+    // Validate friend request data
+    function isValidFriendRequest(friend) {
+      return friend.friendUserId is string && friend.friendUserId.size() > 0 &&
+        friend.friendEmail is string && friend.friendEmail.size() > 0 &&
+        friend.status is string;
     }
   }
 }
