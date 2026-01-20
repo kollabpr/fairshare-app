@@ -104,9 +104,14 @@ class AuthService extends ChangeNotifier {
         password: password,
       );
 
-      // Update display name if provided
+      // Update display name if provided (don't fail signup if this fails)
       if (displayName != null && displayName.isNotEmpty) {
-        await credential.user?.updateDisplayName(displayName);
+        try {
+          await credential.user?.updateDisplayName(displayName);
+        } catch (e) {
+          debugPrint('Failed to update display name: $e');
+          // Continue - account was created successfully
+        }
       }
 
       _isLoading = false;
