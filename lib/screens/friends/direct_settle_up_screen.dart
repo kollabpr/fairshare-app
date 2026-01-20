@@ -199,11 +199,11 @@ class _DirectSettleUpScreenState extends State<DirectSettleUpScreen>
 
       final settlement = await friendsService.createDirectSettlement(
         fromUserId: fromUserId,
-        fromUserEmail: fromUserEmail,
-        fromUserName: fromUserName,
+        fromEmail: fromUserEmail,
+        fromName: fromUserName,
         toUserId: toUserId,
-        toUserEmail: toUserEmail,
-        toUserName: toUserName,
+        toEmail: toUserEmail,
+        toName: toUserName,
         amount: amount,
         notes: _notesController.text.trim().isNotEmpty
             ? _notesController.text.trim()

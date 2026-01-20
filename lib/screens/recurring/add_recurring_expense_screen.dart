@@ -248,7 +248,7 @@ class _AddRecurringExpenseScreenState extends State<AddRecurringExpenseScreen>
                               HapticFeedback.selectionClick();
                               setState(() {
                                 _selectedGroup = group;
-                                _currencyCode = group.defaultCurrency;
+                                _currencyCode = group.currencyCode;
                               });
                               Navigator.pop(context);
                             },
