@@ -170,12 +170,14 @@ class AuthService extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       return false;
-    } catch (e) {
+    } catch (e, stackTrace) {
       // Reset pending verification state on error
       _pendingEmailVerification = false;
       _pendingEmail = null;
       _pendingDisplayName = null;
-      _error = 'An unexpected error occurred. Please try again.';
+      debugPrint('SignUp unexpected error: $e');
+      debugPrint('Stack trace: $stackTrace');
+      _error = 'An unexpected error occurred: ${e.toString().split('\n').first}';
       _isLoading = false;
       notifyListeners();
       return false;
@@ -337,19 +339,8 @@ class AuthService extends ChangeNotifier {
 
       final trimmedEmail = email.trim();
 
-      // First, check if the user exists by fetching sign-in methods
-      // This helps provide more specific error messages
-      final signInMethods = await _auth.fetchSignInMethodsForEmail(trimmedEmail);
-
-      if (signInMethods.isEmpty) {
-        // No account exists with this email
-        _error = 'No account exists with this email.';
-        _isLoading = false;
-        notifyListeners();
-        return false;
-      }
-
-      // Account exists, try to sign in
+      // Try to sign in directly
+      // Firebase will return specific error codes for different failures
       await _auth.signInWithEmailAndPassword(
         email: trimmedEmail,
         password: password,
@@ -359,20 +350,53 @@ class AuthService extends ChangeNotifier {
       notifyListeners();
       return true;
     } on FirebaseAuthException catch (e) {
-      // If we get here after checking user exists, it's likely a wrong password
-      if (e.code == 'wrong-password' ||
-          e.code == 'invalid-credential' ||
-          e.code == 'INVALID_LOGIN_CREDENTIALS') {
-        _error = 'Incorrect password. Please try again.';
-      } else if (e.code == 'user-not-found') {
-        _error = 'No account exists with this email.';
-      } else {
-        _error = _getAuthErrorMessage(e.code);
+      debugPrint('SignIn FirebaseAuthException: ${e.code} - ${e.message}');
+
+      // Handle specific error codes
+      switch (e.code) {
+        case 'user-not-found':
+          _error = 'No account exists with this email.';
+          break;
+        case 'wrong-password':
+          _error = 'Incorrect password. Please try again.';
+          break;
+        case 'invalid-credential':
+        case 'INVALID_LOGIN_CREDENTIALS':
+          // Firebase may return this for both wrong password and non-existent user
+          // Check if user exists in Firestore to give better error
+          try {
+            final userQuery = await _firestore
+                .collection('users')
+                .where('email', isEqualTo: email.trim())
+                .limit(1)
+                .get();
+            if (userQuery.docs.isEmpty) {
+              _error = 'No account exists with this email.';
+            } else {
+              _error = 'Incorrect password. Please try again.';
+            }
+          } catch (_) {
+            _error = 'Incorrect email or password.';
+          }
+          break;
+        case 'invalid-email':
+          _error = 'Please enter a valid email address.';
+          break;
+        case 'user-disabled':
+          _error = 'This account has been disabled.';
+          break;
+        case 'too-many-requests':
+          _error = 'Too many failed attempts. Please try again later.';
+          break;
+        default:
+          _error = _getAuthErrorMessage(e.code);
       }
       _isLoading = false;
       notifyListeners();
       return false;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('SignIn unexpected error: $e');
+      debugPrint('Stack trace: $stackTrace');
       _error = 'An unexpected error occurred. Please try again.';
       _isLoading = false;
       notifyListeners();
