@@ -105,6 +105,13 @@ class AuthService extends ChangeNotifier {
         );
       }
 
+      // IMPORTANT: Set pending verification state BEFORE creating user
+      // This prevents the race condition where authStateChanges triggers
+      // before we can set the pending flag
+      _pendingEmailVerification = true;
+      _pendingEmail = email.trim();
+      _pendingDisplayName = displayName;
+
       // Create user
       final credential = await _auth.createUserWithEmailAndPassword(
         email: email.trim(),
@@ -150,20 +157,24 @@ class AuthService extends ChangeNotifier {
         debugPrint('Warning: OTP email could not be sent');
       }
 
-      // Set pending verification state
-      _pendingEmailVerification = true;
-      _pendingEmail = email.trim();
-      _pendingDisplayName = displayName;
-
+      // Pending verification state already set before user creation
       _isLoading = false;
       notifyListeners();
       return true;
     } on FirebaseAuthException catch (e) {
+      // Reset pending verification state on error
+      _pendingEmailVerification = false;
+      _pendingEmail = null;
+      _pendingDisplayName = null;
       _error = _getAuthErrorMessage(e.code);
       _isLoading = false;
       notifyListeners();
       return false;
     } catch (e) {
+      // Reset pending verification state on error
+      _pendingEmailVerification = false;
+      _pendingEmail = null;
+      _pendingDisplayName = null;
       _error = 'An unexpected error occurred. Please try again.';
       _isLoading = false;
       notifyListeners();
@@ -324,8 +335,23 @@ class AuthService extends ChangeNotifier {
       _error = null;
       notifyListeners();
 
+      final trimmedEmail = email.trim();
+
+      // First, check if the user exists by fetching sign-in methods
+      // This helps provide more specific error messages
+      final signInMethods = await _auth.fetchSignInMethodsForEmail(trimmedEmail);
+
+      if (signInMethods.isEmpty) {
+        // No account exists with this email
+        _error = 'No account exists with this email.';
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+
+      // Account exists, try to sign in
       await _auth.signInWithEmailAndPassword(
-        email: email.trim(),
+        email: trimmedEmail,
         password: password,
       );
 
@@ -333,7 +359,16 @@ class AuthService extends ChangeNotifier {
       notifyListeners();
       return true;
     } on FirebaseAuthException catch (e) {
-      _error = _getAuthErrorMessage(e.code);
+      // If we get here after checking user exists, it's likely a wrong password
+      if (e.code == 'wrong-password' ||
+          e.code == 'invalid-credential' ||
+          e.code == 'INVALID_LOGIN_CREDENTIALS') {
+        _error = 'Incorrect password. Please try again.';
+      } else if (e.code == 'user-not-found') {
+        _error = 'No account exists with this email.';
+      } else {
+        _error = _getAuthErrorMessage(e.code);
+      }
       _isLoading = false;
       notifyListeners();
       return false;

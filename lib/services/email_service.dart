@@ -13,18 +13,27 @@ import 'package:http/http.dart' as http;
 /// 4. Set the API key using EmailService.initialize('your-api-key')
 class EmailService {
   static String? _apiKey;
+  static String? _senderEmail;
+  static String? _senderName;
   static const String _baseUrl = 'https://api.brevo.com/v3';
-  static const String _senderEmail = 'noreply@fairshare.app';
-  static const String _senderName = 'FairShare';
+  static const String _defaultSenderName = 'FairShare';
 
   /// Initialize the email service with your Brevo API key
   /// Call this in main.dart before runApp()
-  static void initialize(String apiKey) {
+  ///
+  /// IMPORTANT: The senderEmail MUST be verified in your Brevo account!
+  /// Go to Brevo Dashboard > Senders, Domains & Dedicated IPs > Add a sender
+  static void initialize(String apiKey, {String? senderEmail, String? senderName}) {
     _apiKey = apiKey;
+    _senderEmail = senderEmail;
+    _senderName = senderName ?? _defaultSenderName;
+    debugPrint('EmailService: Initialized with sender: ${_senderEmail ?? "not set"}');
   }
 
   /// Check if the service is configured
-  static bool get isConfigured => _apiKey != null && _apiKey!.isNotEmpty;
+  static bool get isConfigured =>
+      _apiKey != null && _apiKey!.isNotEmpty &&
+      _senderEmail != null && _senderEmail!.isNotEmpty;
 
   /// Generate a 6-digit OTP
   static String generateOTP() {
@@ -147,7 +156,17 @@ class EmailService {
     required String subject,
     required String htmlContent,
   }) async {
+    if (!isConfigured) {
+      debugPrint('EmailService: Not configured properly!');
+      debugPrint('  - API Key set: ${_apiKey != null && _apiKey!.isNotEmpty}');
+      debugPrint('  - Sender Email set: ${_senderEmail != null && _senderEmail!.isNotEmpty}');
+      return false;
+    }
+
     try {
+      debugPrint('EmailService: Sending email to $toEmail from $_senderEmail');
+      debugPrint('EmailService: Subject: $subject');
+
       final response = await http.post(
         Uri.parse('$_baseUrl/smtp/email'),
         headers: {
@@ -175,11 +194,15 @@ class EmailService {
         debugPrint('EmailService: Email sent successfully to $toEmail');
         return true;
       } else {
-        debugPrint('EmailService: Failed to send email. Status: ${response.statusCode}, Body: ${response.body}');
+        debugPrint('EmailService: Failed to send email!');
+        debugPrint('  - Status code: ${response.statusCode}');
+        debugPrint('  - Response body: ${response.body}');
+        debugPrint('  - This usually means the sender email is not verified in Brevo');
         return false;
       }
-    } catch (e) {
-      debugPrint('EmailService: Error sending email: $e');
+    } catch (e, stackTrace) {
+      debugPrint('EmailService: Exception sending email: $e');
+      debugPrint('EmailService: Stack trace: $stackTrace');
       return false;
     }
   }

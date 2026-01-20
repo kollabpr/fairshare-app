@@ -36,7 +36,12 @@ void main() async {
       );
 
       // Initialize Brevo email service (300 emails/day free)
-      EmailService.initialize(AppSecrets.brevoApiKey);
+      // IMPORTANT: senderEmail MUST be verified in Brevo dashboard
+      EmailService.initialize(
+        AppSecrets.brevoApiKey,
+        senderEmail: AppSecrets.senderEmail,
+        senderName: AppSecrets.senderName,
+      );
     } catch (e) {
       debugPrint('Firebase init error: $e');
       // Don't crash - app will show error on login attempt
