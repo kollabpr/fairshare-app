@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -24,6 +25,37 @@ class EmailService {
 
   /// Check if the service is configured
   static bool get isConfigured => _apiKey != null && _apiKey!.isNotEmpty;
+
+  /// Generate a 6-digit OTP
+  static String generateOTP() {
+    final random = Random.secure();
+    return (100000 + random.nextInt(900000)).toString();
+  }
+
+  /// Send OTP verification email for new account
+  static Future<bool> sendOTPEmail({
+    required String recipientEmail,
+    required String recipientName,
+    required String otp,
+  }) async {
+    if (!isConfigured) {
+      debugPrint('EmailService: Not configured, skipping email');
+      return false;
+    }
+
+    final subject = 'Your FairShare verification code: $otp';
+    final htmlContent = _buildOTPEmailHtml(
+      recipientName: recipientName,
+      otp: otp,
+    );
+
+    return _sendEmail(
+      toEmail: recipientEmail,
+      toName: recipientName,
+      subject: subject,
+      htmlContent: htmlContent,
+    );
+  }
 
   /// Send a friend request notification email
   static Future<bool> sendFriendRequestEmail({
@@ -288,6 +320,58 @@ class EmailService {
         <div class="expense-amount">You owe $currencySymbol${amountOwed.toStringAsFixed(2)}</div>
       </div>
       <a href="https://fairshare-expense-split.web.app" class="cta">View Details</a>
+    </div>
+    <div class="footer">
+      &copy; 2024 FairShare App
+    </div>
+  </div>
+</body>
+</html>
+''';
+  }
+
+  /// Build HTML for OTP verification email
+  static String _buildOTPEmailHtml({
+    required String recipientName,
+    required String otp,
+  }) {
+    return '''
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; }
+    .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .header { background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); padding: 40px 30px; text-align: center; }
+    .header h1 { color: white; margin: 0; font-size: 28px; }
+    .header p { color: rgba(255,255,255,0.9); margin: 10px 0 0 0; }
+    .content { padding: 40px 30px; text-align: center; }
+    .message { font-size: 16px; color: #333; line-height: 1.6; margin-bottom: 30px; }
+    .otp-box { background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); border-radius: 16px; padding: 30px; margin: 20px 0; }
+    .otp-code { font-size: 42px; font-weight: 700; color: white; letter-spacing: 12px; font-family: monospace; }
+    .expires { color: #6b7280; font-size: 14px; margin-top: 20px; }
+    .warning { background: #FEF3C7; border: 1px solid #F59E0B; border-radius: 12px; padding: 16px; margin-top: 20px; color: #92400E; font-size: 14px; }
+    .footer { background: #f9fafb; padding: 20px 30px; text-align: center; color: #6b7280; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>FairShare</h1>
+      <p>Verify your email address</p>
+    </div>
+    <div class="content">
+      <p class="message">
+        Hey $recipientName!<br><br>
+        Welcome to FairShare! Please use the verification code below to complete your registration:
+      </p>
+      <div class="otp-box">
+        <div class="otp-code">$otp</div>
+      </div>
+      <p class="expires">This code expires in 10 minutes</p>
+      <div class="warning">
+        &#9888; If you didn't create a FairShare account, please ignore this email.
+      </div>
     </div>
     <div class="footer">
       &copy; 2024 FairShare App

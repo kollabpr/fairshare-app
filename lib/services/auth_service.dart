@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import '../models/user_model.dart';
+import 'email_service.dart';
 
 /// Authentication service using Firebase Auth
 /// Adapted from finance_app for FairShare
@@ -13,13 +14,18 @@ class AuthService extends ChangeNotifier {
   UserModel? _currentUser;
   bool _isLoading = false;
   String? _error;
+  bool _pendingEmailVerification = false;
+  String? _pendingEmail;
+  String? _pendingDisplayName;
 
   // Getters
   User? get firebaseUser => _firebaseUser;
   UserModel? get currentUser => _currentUser;
   bool get isLoading => _isLoading;
   String? get error => _error;
-  bool get isAuthenticated => _firebaseUser != null;
+  bool get isAuthenticated => _firebaseUser != null && !_pendingEmailVerification;
+  bool get isPendingVerification => _pendingEmailVerification;
+  String? get pendingEmail => _pendingEmail;
   String? get userId => _firebaseUser?.uid;
 
   AuthService() {
@@ -71,6 +77,7 @@ class AuthService extends ChangeNotifier {
   }
 
   /// Sign up with email and password
+  /// Returns true if OTP was sent successfully, user needs to verify
   Future<bool> signUp({
     required String email,
     required String password,
@@ -104,15 +111,49 @@ class AuthService extends ChangeNotifier {
         password: password,
       );
 
-      // Update display name if provided (don't fail signup if this fails)
+      final user = credential.user;
+      if (user == null) {
+        throw Exception('Failed to create user');
+      }
+
+      // Update display name if provided
       if (displayName != null && displayName.isNotEmpty) {
         try {
-          await credential.user?.updateDisplayName(displayName);
+          await user.updateDisplayName(displayName);
         } catch (e) {
           debugPrint('Failed to update display name: $e');
-          // Continue - account was created successfully
         }
       }
+
+      // Generate and store OTP
+      final otp = EmailService.generateOTP();
+      final otpExpiry = DateTime.now().add(const Duration(minutes: 10));
+
+      await _firestore.collection('users').doc(user.uid).set({
+        'email': email.trim(),
+        'displayName': displayName,
+        'emailVerified': false,
+        'otp': otp,
+        'otpExpiry': Timestamp.fromDate(otpExpiry),
+        'createdAt': Timestamp.now(),
+        'lastLogin': Timestamp.now(),
+      });
+
+      // Send OTP email
+      final emailSent = await EmailService.sendOTPEmail(
+        recipientEmail: email.trim(),
+        recipientName: displayName ?? email.split('@').first,
+        otp: otp,
+      );
+
+      if (!emailSent) {
+        debugPrint('Warning: OTP email could not be sent');
+      }
+
+      // Set pending verification state
+      _pendingEmailVerification = true;
+      _pendingEmail = email.trim();
+      _pendingDisplayName = displayName;
 
       _isLoading = false;
       notifyListeners();
@@ -128,6 +169,149 @@ class AuthService extends ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  /// Verify OTP and complete registration
+  Future<bool> verifyOTP(String enteredOTP) async {
+    if (_firebaseUser == null) {
+      _error = 'No user session found. Please sign up again.';
+      notifyListeners();
+      return false;
+    }
+
+    try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
+      // Get stored OTP from Firestore
+      final userDoc = await _firestore.collection('users').doc(_firebaseUser!.uid).get();
+
+      if (!userDoc.exists) {
+        _error = 'User data not found. Please sign up again.';
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+
+      final data = userDoc.data()!;
+      final storedOTP = data['otp'] as String?;
+      final otpExpiry = (data['otpExpiry'] as Timestamp?)?.toDate();
+
+      // Check if OTP exists
+      if (storedOTP == null || otpExpiry == null) {
+        _error = 'No verification code found. Please request a new one.';
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+
+      // Check if OTP expired
+      if (DateTime.now().isAfter(otpExpiry)) {
+        _error = 'Verification code has expired. Please request a new one.';
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+
+      // Verify OTP
+      if (enteredOTP != storedOTP) {
+        _error = 'Invalid verification code. Please try again.';
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+
+      // OTP is valid - mark email as verified
+      await _firestore.collection('users').doc(_firebaseUser!.uid).update({
+        'emailVerified': true,
+        'otp': FieldValue.delete(),
+        'otpExpiry': FieldValue.delete(),
+      });
+
+      // Clear pending verification state
+      _pendingEmailVerification = false;
+      _pendingEmail = null;
+      _pendingDisplayName = null;
+
+      // Fetch full user profile
+      await _fetchUserProfile(_firebaseUser!);
+
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = 'Verification failed. Please try again.';
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Resend OTP verification email
+  Future<bool> resendOTP() async {
+    if (_firebaseUser == null || _pendingEmail == null) {
+      _error = 'No pending verification. Please sign up again.';
+      notifyListeners();
+      return false;
+    }
+
+    try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
+      // Generate new OTP
+      final otp = EmailService.generateOTP();
+      final otpExpiry = DateTime.now().add(const Duration(minutes: 10));
+
+      // Update OTP in Firestore
+      await _firestore.collection('users').doc(_firebaseUser!.uid).update({
+        'otp': otp,
+        'otpExpiry': Timestamp.fromDate(otpExpiry),
+      });
+
+      // Send OTP email
+      final emailSent = await EmailService.sendOTPEmail(
+        recipientEmail: _pendingEmail!,
+        recipientName: _pendingDisplayName ?? _pendingEmail!.split('@').first,
+        otp: otp,
+      );
+
+      _isLoading = false;
+      notifyListeners();
+
+      if (!emailSent) {
+        _error = 'Failed to send verification email. Please try again.';
+        return false;
+      }
+
+      return true;
+    } catch (e) {
+      _error = 'Failed to resend code. Please try again.';
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Cancel pending verification and sign out
+  Future<void> cancelVerification() async {
+    if (_firebaseUser != null) {
+      try {
+        // Delete the unverified user document
+        await _firestore.collection('users').doc(_firebaseUser!.uid).delete();
+        // Delete the Firebase Auth user
+        await _firebaseUser!.delete();
+      } catch (e) {
+        debugPrint('Error cleaning up unverified user: $e');
+      }
+    }
+
+    _pendingEmailVerification = false;
+    _pendingEmail = null;
+    _pendingDisplayName = null;
+    await signOut();
   }
 
   /// Sign in with email and password

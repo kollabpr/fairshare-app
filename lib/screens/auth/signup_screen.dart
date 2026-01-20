@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../config/app_theme.dart';
 import '../../config/app_animations.dart';
 import '../../services/auth_service.dart';
+import 'otp_verification_screen.dart';
 
 /// Sign up screen with smooth animations and real-time password validation
 class SignUpScreen extends StatefulWidget {
@@ -112,7 +113,14 @@ class _SignUpScreenState extends State<SignUpScreen>
 
       if (success && mounted) {
         HapticFeedback.mediumImpact();
-        // Navigate will happen automatically through auth state
+        // Navigate to OTP verification screen
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => OTPVerificationScreen(
+              email: _emailController.text.trim(),
+            ),
+          ),
+        );
       } else if (mounted) {
         HapticFeedback.heavyImpact();
         final errorMessage = authService.error ?? 'Sign up failed';
